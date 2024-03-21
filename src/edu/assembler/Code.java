@@ -1,4 +1,4 @@
-package src.edu.assembler;
+package edu.assembler;
 
 public final class Code {
     public String dest(String command) {

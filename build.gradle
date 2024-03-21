@@ -1,0 +1,33 @@
+plugins {
+    id "application"
+}
+
+apply plugin : "java" 
+java {
+    version = JavaVersion.VERSION_17
+}
+
+group 'edu.assembler'
+version '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+         java {
+            srcDirs = ['src']
+         }
+    }
+
+    test {
+        java {
+            srcDirs = ['test']
+        }
+    }
+}
+
+application {
+    mainClass = 'edu.assembler.Assembler'
+}

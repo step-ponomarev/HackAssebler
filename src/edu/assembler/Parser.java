@@ -1,4 +1,4 @@
-package src.edu.assembler;
+package edu.assembler;
 
 import java.io.Closeable;
 import java.io.IOException;
