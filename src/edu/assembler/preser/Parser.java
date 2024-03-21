@@ -1,11 +1,13 @@
-package edu.assembler;
+package edu.assembler.preser;
 
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.Reader;
 
 public final class Parser implements Closeable {
-    private final Reader reader;
+    private final BufferedReader reader;
+    private boolean eof;
+    private String currentLine;
 
     public enum Instruction {
         A_INSTRUCTION,
@@ -13,8 +15,7 @@ public final class Parser implements Closeable {
         L_INSTRUCTION
     }
 
-    //TODO: Мб ридер прост?
-    public Parser(Reader reader) {
+    public Parser(BufferedReader reader) {
         if (reader == null) {
             throw new IllegalArgumentException("Reader cannot be null!");
         }
@@ -32,6 +33,19 @@ public final class Parser implements Closeable {
     }
 
     public void advance() {
+        try {
+            final String line = reader.readLine();
+            if (line == null) {
+                currentLine = null;
+                eof = true;
+                return;
+            }
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         throw new UnsupportedOperationException("Not implemented");
     }
 

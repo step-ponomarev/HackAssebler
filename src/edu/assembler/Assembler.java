@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import edu.assembler.preser.Parser;
+
 public final class Assembler {
     public static void main(String[] args) {
         if (args.length != 1) {
