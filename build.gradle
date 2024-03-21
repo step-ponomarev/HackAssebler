@@ -2,7 +2,7 @@ plugins {
     id "application"
 }
 
-apply plugin : "java" 
+apply plugin: "java"
 java {
     version = JavaVersion.VERSION_17
 }
@@ -16,9 +16,9 @@ repositories {
 
 sourceSets {
     main {
-         java {
+        java {
             srcDirs = ['src']
-         }
+        }
     }
 
     test {
@@ -30,4 +30,9 @@ sourceSets {
 
 application {
     mainClass = 'edu.assembler.Assembler'
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
