@@ -1,3 +1,5 @@
+package src.edu.assembler;
+
 public final class Code {
     public String dest(String command) {
         throw new UnsupportedOperationException("Not implemented");
