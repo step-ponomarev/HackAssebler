@@ -5,27 +5,27 @@ import org.junit.jupiter.api.Test;
 
 public final class TokenPaterntsTest {
     @Test
-    public void parseCommentLine() {
+    public void matchCommentLine() {
         Assertions.assertTrue(TokenPaternts.COMMENT.matcher("// some comment").matches());
     }
 
     @Test
-    public void parseEmptyLine() {
+    public void matchEmptyLine() {
         Assertions.assertTrue(TokenPaternts.EMPTY.matcher("   \s \t").matches());
     }
 
     @Test
-    public void parseAInstruction() {
+    public void matchAInstruction() {
         Assertions.assertTrue(TokenPaternts.A_INSTRUCTION.matcher("@128").matches());
     }
 
     @Test
-    public void parseTooShortAInstruction() {
+    public void matchTooShortAInstruction() {
         Assertions.assertFalse(TokenPaternts.A_INSTRUCTION.matcher("@").matches());
     }
 
     @Test
-    public void parseValidSymbol() {
+    public void matchSymbol() {
         final String symbol = "testSymbol";
         Assertions.assertTrue(TokenPaternts.SYMBOL.matcher(symbol).matches());
 
