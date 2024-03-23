@@ -3,8 +3,8 @@ package edu.assembler.prarser;
 import java.util.regex.Pattern;
 
 public enum InstructionType {
-    C_INSTRUCTION(TokenPaternts.C_INSTRUCTION),
-    A_INSTRUCTION(TokenPaternts.A_INSTRUCTION);
+    C_INSTRUCTION(TokenPaterns.C_INSTRUCTION),
+    A_INSTRUCTION(TokenPaterns.A_INSTRUCTION);
     private final Pattern pattern;
 
     InstructionType(Pattern pattern) {
