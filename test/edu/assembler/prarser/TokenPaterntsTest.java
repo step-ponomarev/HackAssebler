@@ -44,7 +44,7 @@ public final class TokenPaterntsTest {
             Assertions.assertTrue(TokenPaternts.SYMBOL.matcher(start + symbol).matches());
         }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i <= 9; i++) {
             Assertions.assertFalse(TokenPaternts.SYMBOL.matcher(i + symbol).matches());
         }
     }
