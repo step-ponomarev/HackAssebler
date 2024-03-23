@@ -1,4 +1,4 @@
-package edu.assembler.preser;
+package edu.assembler.prarser;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
