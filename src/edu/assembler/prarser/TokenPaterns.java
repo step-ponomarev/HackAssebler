@@ -9,8 +9,7 @@ public final class TokenPaterns {
 
     static Pattern LABEL_INSTRUCTION = Pattern.compile("^\\(" + SYMBOL.pattern().substring(1, SYMBOL.pattern().length() - 1) + "\\)$");
 
-    //TODO: Сложкние с десятичными числами
-    static Pattern ASSIGN_INSTRUCTION = Pattern.compile("^[ADM]{1}[\s]*=[\s]*[ADM]{1}([\s]*[-+]{1}[\s]*[ADM])?$");
+    static Pattern ASSIGN_INSTRUCTION = Pattern.compile("^[ADM]{1}[\s]*=[\s]*([ADM]{1}|[0-9]+)([\s]*[-+]{1}[\s]*([ADM]{1}|[0-9]+))?$");
 
     static Pattern A_INSTRUCTION = Pattern.compile("^@[0-9]+$");
     static Pattern C_INSTRUCTION = Pattern.compile(String.format("(%s|%s)", LABEL_INSTRUCTION, ASSIGN_INSTRUCTION));
