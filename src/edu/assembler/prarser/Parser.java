@@ -7,13 +7,14 @@ import java.io.IOException;
 public final class Parser implements Closeable {
     private final BufferedReader reader;
     private boolean eof;
-    private String currentLine;
+    private String symbol;
 
-    public enum Instruction {
-        A_INSTRUCTION,
-        C_INSTRUCTION,
-        L_INSTRUCTION
-    }
+    private String dest;
+
+    private String comp;
+
+    private String jump;
+    private InstructionType instructionType;
 
     public Parser(BufferedReader reader) {
         if (reader == null) {
@@ -29,32 +30,69 @@ public final class Parser implements Closeable {
     }
 
     public boolean hasMoreLines() {
-        throw new UnsupportedOperationException("Not implemented");
+        return !eof;
     }
 
     public void advance() {
         try {
-            final String line = reader.readLine();
-            if (line == null) {
-                currentLine = null;
+            String currentLine;
+            while ((currentLine = reader.readLine()) != null) {
+                final InstructionType type = InstructionType.parse(currentLine.trim());
+                if (type == null) {
+                    continue;
+                }
+
+                instructionType = type;
+                break;
+            }
+
+            if (currentLine == null) {
                 eof = true;
                 return;
             }
-
-
+            
+            switch (instructionType) {
+                case A_INSTRUCTION:
+                    handleSymbol(currentLine);
+                    break;
+                case C_INSTRUCTION:
+                    handleCInstruction(currentLine);
+                default:
+                    throw new UnsupportedOperationException("Unsupported instruction " + instructionType);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        throw new UnsupportedOperationException("Not implemented");
     }
 
-    public Instruction instructionType() {
-        throw new UnsupportedOperationException("Not implemented");
+    private void handleCInstruction(String currentLine) {
+        if (TokenPatterns.JMP_INSTRUCTION.matcher(currentLine).matches()) {
+            return;
+        }
+        
+        symbol = currentLine.substring(1);
+        dest = null;
+        comp = null;
+        jump = null;
+    }
+    
+    private void handleJump(String currentLine) {
+        
+    }
+
+    private void handleSymbol(String currentLine) {
+        symbol = currentLine.substring(1);
+        dest = null;
+        comp = null;
+        jump = null;
+    }
+
+    public InstructionType instructionType() {
+        return instructionType;
     }
 
     public String symbol() {
-        throw new UnsupportedOperationException("Not implemented");
+        return symbol;
     }
 
     public String dest() {

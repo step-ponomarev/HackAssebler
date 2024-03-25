@@ -11,6 +11,10 @@ public enum InstructionType {
         this.pattern = pattern;
     }
 
+    /**
+     * @param line
+     * @return InstructionType if correct instruction and null if not
+     */
     public static InstructionType parse(String line) {
         for (InstructionType type : InstructionType.values()) {
             if (type.pattern.matcher(line).matches()) {
@@ -18,6 +22,6 @@ public enum InstructionType {
             }
         }
 
-        throw new IllegalArgumentException("Unexpected line: " + line);
+        return null;
     }
 }
