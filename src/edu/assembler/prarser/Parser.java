@@ -3,10 +3,14 @@ package edu.assembler.prarser;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public final class Parser implements Closeable {
     private final BufferedReader reader;
+
     private boolean eof;
+    private String currInstruction;
     private String symbol;
 
     private String dest;
@@ -16,12 +20,16 @@ public final class Parser implements Closeable {
     private String jump;
     private InstructionType instructionType;
 
-    public Parser(BufferedReader reader) {
-        if (reader == null) {
+    public Parser(Path file) throws IOException {
+        if (file == null) {
             throw new IllegalArgumentException("Reader cannot be null!");
         }
 
-        this.reader = reader;
+        if (Files.notExists(file)) {
+            throw new IllegalStateException("File does not exist: " + file);
+        }
+
+        this.reader = Files.newBufferedReader(file);
     }
 
     @Override
@@ -34,50 +42,93 @@ public final class Parser implements Closeable {
     }
 
     public void advance() {
-        try {
-            String currentLine;
-            while ((currentLine = reader.readLine()) != null) {
-                final InstructionType type = InstructionType.parse(currentLine.trim());
-                if (type == null) {
-                    continue;
-                }
+        if (eof) {
+            throw new IllegalStateException("End of file");
+        }
 
-                instructionType = type;
-                break;
+        try {
+            String instruction = readInstruction();
+
+            final boolean firstTime = currInstruction == null;
+            if (firstTime) {
+                currInstruction = readInstruction();
+            } else {
+                final String nextInstruction = instruction;
+                instruction = currInstruction;
+                currInstruction = nextInstruction;
             }
 
-            if (currentLine == null) {
-                eof = true;
+            // if empty file or full comment file
+            if (instruction == null && eof) {
                 return;
             }
-            
-            switch (instructionType) {
+
+            final InstructionType type = InstructionType.parse(instruction);
+            if (type == null) {
+                throw new IllegalStateException("Unsupported instruction " + instruction);
+            }
+
+            switch (type) {
                 case A_INSTRUCTION:
-                    handleSymbol(currentLine);
+                    handleSymbol(instruction);
                     break;
                 case C_INSTRUCTION:
-                    handleCInstruction(currentLine);
+                    handleCInstruction(instruction);
                 default:
                     throw new UnsupportedOperationException("Unsupported instruction " + instructionType);
             }
+
+            instructionType = type;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void handleCInstruction(String currentLine) {
-        if (TokenPatterns.JMP_INSTRUCTION.matcher(currentLine).matches()) {
-            return;
+    private String readInstruction() throws IOException {
+        String currentLine;
+        while ((currentLine = reader.readLine()) != null) {
+            currentLine = currentLine.trim();
+            if (currentLine.isEmpty()) {
+                continue;
+            }
+
+            if (TokenPatterns.COMMENT.matcher(currentLine).matches()) {
+                continue;
+            }
+
+            return currentLine;
         }
         
+        eof = true;
+
+        return null;
+    }
+
+    private void handleCInstruction(String currentLine) {
+        if (TokenPatterns.JMP_INSTRUCTION.matcher(currentLine).matches()) {
+            handleJump(currentLine);
+        } else if (TokenPatterns.ASSIGN_INSTRUCTION.matcher(currentLine).matches()) {
+            handleAssign(currentLine);
+        } else if (TokenPatterns.LABEL_INSTRUCTION.matcher(currentLine).matches()) {
+            throw new UnsupportedOperationException("Unsupported instruction");
+        }
+
         symbol = currentLine.substring(1);
         dest = null;
         comp = null;
         jump = null;
     }
-    
+
     private void handleJump(String currentLine) {
-        
+
+    }
+
+    private void handleAssign(String currentLine) {
+
+    }
+
+    private void handleLabel(String currentLine) {
+
     }
 
     private void handleSymbol(String currentLine) {

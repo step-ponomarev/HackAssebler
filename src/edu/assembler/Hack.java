@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 
 import edu.assembler.prarser.Parser;
 
-public final class Assembler {
+public final class Hack {
     public static void main(String[] args) {
         if (args.length != 1) {
             throw new IllegalArgumentException("Expected 1 arg, but got: " + args.length);
@@ -18,7 +18,7 @@ public final class Assembler {
             throw new IllegalStateException("File is not exists");
         }
 
-        try (final Parser parser = new Parser(Files.newBufferedReader(path))) {
+        try (final Parser parser = new Parser(path)) {
 
         } catch (IOException e) {
             throw new RuntimeException(e);
