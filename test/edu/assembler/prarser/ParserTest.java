@@ -17,16 +17,40 @@ public final class ParserTest {
             parser.advance();
 
             Assertions.assertFalse(parser.hasMoreLines());
+            Assertions.assertNull(parser.instructionType());
+            Assertions.assertNull(parser.symbol());
+            Assertions.assertNull(parser.comp());
+            Assertions.assertNull(parser.dest());
+            Assertions.assertNull(parser.jump());
         }
     }
 
     @Test
-    public void testACommand() throws IOException {
+    public void testComments() throws IOException {
+        final Path emptyFile = RESOURCES_DIR.resolve("comments.asm");
+        try (Parser parser = new Parser((emptyFile))) {
+            parser.advance();
+
+            Assertions.assertNull(parser.instructionType());
+            Assertions.assertNull(parser.symbol());
+            Assertions.assertNull(parser.comp());
+            Assertions.assertNull(parser.dest());
+            Assertions.assertNull(parser.jump());
+            Assertions.assertFalse(parser.hasMoreLines());
+        }
+    }
+
+    @Test
+    public void testAInstruction() throws IOException {
         final Path emptyFile = RESOURCES_DIR.resolve("a_instruction.asm");
         try (Parser parser = new Parser((emptyFile))) {
             parser.advance();
 
             Assertions.assertEquals("12345", parser.symbol());
+            Assertions.assertEquals(InstructionType.A_INSTRUCTION, parser.instructionType());
+            Assertions.assertNull(parser.comp());
+            Assertions.assertNull(parser.dest());
+            Assertions.assertNull(parser.jump());
             Assertions.assertFalse(parser.hasMoreLines());
         }
     }

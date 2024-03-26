@@ -98,7 +98,7 @@ public final class Parser implements Closeable {
 
             return currentLine;
         }
-        
+
         eof = true;
 
         return null;
@@ -147,14 +147,14 @@ public final class Parser implements Closeable {
     }
 
     public String dest() {
-        throw new UnsupportedOperationException("Not implemented");
+        return dest;
     }
 
     public String comp() {
-        throw new UnsupportedOperationException("Not implemented");
+        return comp;
     }
 
     public String jump() {
-        throw new UnsupportedOperationException("Not implemented");
+        return jump;
     }
 }
