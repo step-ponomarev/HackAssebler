@@ -115,4 +115,47 @@ public final class ParserTest {
             Files.deleteIfExists(file);
         }
     }
+
+    @Test
+    public void testAssignInstruction() throws IOException {
+        final String[] registers = {"D", "M", "A"};
+        final String[] operations = {"+", "-"};
+
+        StringBuilder asmInstruction = new StringBuilder();
+        for (String destRegister : registers) {
+            for (String compRegister1 : registers) {
+                for (String compRegister2 : registers) {
+                    for (String operation : operations) {
+                        asmInstruction.append(destRegister).append("=").append(compRegister1).append(operation).append(compRegister2).append("\n");
+                    }
+                }
+            }
+        }
+
+        final Path file = RESOURCES_DIR.resolve("jump_instruction.asm");
+        Files.createFile(file);
+        Files.writeString(file, asmInstruction.toString());
+
+        try (Parser parser = new Parser((file))) {
+            for (String destRegister : registers) {
+                for (String compRegister1 : registers) {
+                    for (String compRegister2 : registers) {
+                        for (String operation : operations) {
+                            parser.advance();
+
+                            Assertions.assertEquals(InstructionType.C_INSTRUCTION, parser.instructionType());
+                            Assertions.assertEquals(destRegister, parser.dest());
+                            Assertions.assertEquals(compRegister1 + operation + compRegister2, parser.comp());
+
+                            Assertions.assertNull(parser.symbol());
+                            Assertions.assertNull(parser.jump());
+                        }
+                    }
+                }
+            }
+            Assertions.assertFalse(parser.hasMoreLines());
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
 }
