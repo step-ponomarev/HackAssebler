@@ -85,7 +85,7 @@ public final class TokenPatternsTest {
         for (String register1 : registers) {
             for (String register2 : registers) {
                 for (String operation : operations) {
-                    for (int i = 0; i <= 9; i++) {
+                    for (int i = 0; i <= 1; i++) {
                         final String assign = register1 + "=" + register2 + operation + i;
                         Assertions.assertTrue(TokenPatterns.ASSIGN_INSTRUCTION.matcher(assign).matches());
                         Assertions.assertTrue(TokenPatterns.C_INSTRUCTION.matcher(assign).matches());

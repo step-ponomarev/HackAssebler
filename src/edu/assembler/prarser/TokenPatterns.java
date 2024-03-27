@@ -11,7 +11,7 @@ public final class TokenPatterns {
 
     static Pattern LABEL_INSTRUCTION = Pattern.compile("^\\(" + SYMBOL.pattern().substring(1, SYMBOL.pattern().length() - 1) + "\\)$");
 
-    static Pattern ASSIGN_INSTRUCTION = Pattern.compile("^[ADM]{1}[\s]*=[\s]*([ADM]{1}|[0-9]+)([\s]*[-+]{1}[\s]*([ADM]{1}|[0-9]+))?$");
+    static Pattern ASSIGN_INSTRUCTION = Pattern.compile("^[ADM]{1}[\s]*=[\s]*([ADM]{1}|([01]{1}|-1))([\s]*[-+]{1}[\s]*([ADM]{1}|[01]{1}))?$");
 
     static Pattern JMP_INSTRUCTION = Pattern.compile("^([ADM]{1}|[0-9]+);(JGT|JEQ|JGE|JLT|JNE|JLE|JMP)$");
 
