@@ -132,7 +132,7 @@ public final class ParserTest {
             }
         }
 
-        final Path file = RESOURCES_DIR.resolve("jump_instruction.asm");
+        final Path file = RESOURCES_DIR.resolve("assign_instruction.asm");
         Files.createFile(file);
         Files.writeString(file, asmInstruction.toString());
 
@@ -154,6 +154,21 @@ public final class ParserTest {
                 }
             }
             Assertions.assertFalse(parser.hasMoreLines());
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
+
+    @Test
+    public void testSpaceRemoving() throws IOException {
+        final String assignText = "A     = M +      D";
+
+        final Path file = RESOURCES_DIR.resolve("assign_instruction.asm");
+        Files.createFile(file);
+        Files.writeString(file, assignText);
+
+        try (Parser parser = new Parser((file))) {
+            Assertions.assertEquals(assignText.replaceAll("\s", ""), parser.readNextInstruction());
         } finally {
             Files.deleteIfExists(file);
         }

@@ -84,10 +84,10 @@ public final class Parser implements Closeable {
         }
     }
 
-    private String readNextInstruction() throws IOException {
+    String readNextInstruction() throws IOException {
         String currentLine;
         while ((currentLine = reader.readLine()) != null) {
-            currentLine = currentLine.trim();
+            currentLine = currentLine.replaceAll("\s", "");
             if (currentLine.isEmpty()) {
                 continue;
             }
@@ -116,14 +116,14 @@ public final class Parser implements Closeable {
 
     private void handleJump(String currentLine) {
         final String[] split = currentLine.split(";");
-        dest = split[0].trim();
-        jump = split[1].trim();
+        dest = split[0];
+        jump = split[1];
     }
 
     private void handleAssign(String currentLine) {
         final String[] split = currentLine.split("=");
-        dest = split[0].trim();
-        comp = split[1].trim();
+        dest = split[0];
+        comp = split[1];
     }
 
     private void handleAInstruction(String currentLine) {
