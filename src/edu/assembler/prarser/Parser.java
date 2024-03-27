@@ -47,11 +47,11 @@ public final class Parser implements Closeable {
         }
 
         try {
-            String instruction = readInstruction();
+            String instruction = readNextInstruction();
 
             final boolean firstTime = currInstruction == null;
             if (firstTime) {
-                currInstruction = readInstruction();
+                currInstruction = readNextInstruction();
             } else {
                 final String nextInstruction = instruction;
                 instruction = currInstruction;
@@ -68,23 +68,23 @@ public final class Parser implements Closeable {
                 throw new IllegalStateException("Unsupported instruction " + instruction);
             }
 
-            switch (type) {
-                case A_INSTRUCTION:
-                    handleSymbol(instruction);
-                    break;
-                case C_INSTRUCTION:
-                    handleCInstruction(instruction);
-                default:
-                    throw new UnsupportedOperationException("Unsupported instruction " + instructionType);
-            }
-
+            symbol = null;
+            dest = null;
+            comp = null;
+            jump = null;
             instructionType = type;
+
+            switch (type) {
+                case A_INSTRUCTION -> handleAInstruction(instruction);
+                case C_INSTRUCTION -> handleCInstruction(instruction);
+                default -> throw new UnsupportedOperationException("Unsupported instruction " + type);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String readInstruction() throws IOException {
+    private String readNextInstruction() throws IOException {
         String currentLine;
         while ((currentLine = reader.readLine()) != null) {
             currentLine = currentLine.trim();
@@ -112,30 +112,22 @@ public final class Parser implements Closeable {
         } else if (TokenPatterns.LABEL_INSTRUCTION.matcher(currentLine).matches()) {
             throw new UnsupportedOperationException("Unsupported instruction");
         }
-
-        symbol = currentLine.substring(1);
-        dest = null;
-        comp = null;
-        jump = null;
     }
 
     private void handleJump(String currentLine) {
-
+        final String[] split = currentLine.split(";");
+        dest = split[0].trim();
+        jump = split[1].trim();
     }
 
     private void handleAssign(String currentLine) {
-
+        final String[] split = currentLine.split("=");
+        dest = split[0].trim();
+        comp = split[1].trim();
     }
 
-    private void handleLabel(String currentLine) {
-
-    }
-
-    private void handleSymbol(String currentLine) {
+    private void handleAInstruction(String currentLine) {
         symbol = currentLine.substring(1);
-        dest = null;
-        comp = null;
-        jump = null;
     }
 
     public InstructionType instructionType() {
