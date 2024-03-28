@@ -18,10 +18,10 @@ public final class HackTest {
 
         try {
             final Path compiledHackFile = Resources.RESOURCES_DIR.resolve("Add.hack");
-            Assertions.assertEquals(Files.readAllBytes(compiledHackFile), Files.readAllBytes(testHackFile));
+            Assertions.assertEquals(Files.size(compiledHackFile), Files.size(testHackFile));
+            Assertions.assertEquals(Files.readString(compiledHackFile), Files.readString(testHackFile));
         } finally {
-//            Files.deleteIfExists(testHackFile);
+            Files.deleteIfExists(testHackFile);
         }
-
     }
 }

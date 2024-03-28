@@ -26,10 +26,12 @@ public final class Hack {
 
                 final InstructionType instructionType = parser.instructionType();
                 if (instructionType == InstructionType.A_INSTRUCTION) {
-                    code.append(0);
-                    code.append(parser.symbol());
+                    final String binaryValue = Integer.toBinaryString(Integer.parseInt(parser.symbol()));
+                    code.append(
+                            String.format("%0" + (16 - binaryValue.length()) + "d%s", 0, binaryValue)
+                    );
                 } else {
-                    code.append(1111);
+                    code.append(111);
 
                     code.append(
                             Code.comp(
@@ -49,7 +51,7 @@ public final class Hack {
                             )
                     );
                 }
-                
+
                 code.append("\n");
             }
 

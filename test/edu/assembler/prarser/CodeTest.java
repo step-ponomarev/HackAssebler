@@ -35,7 +35,7 @@ public final class CodeTest {
         Assertions.assertEquals("0101010", Code.comp("0"));
         Assertions.assertEquals("0111111", Code.comp("1"));
         Assertions.assertEquals("0111010", Code.comp("-1"));
-        Assertions.assertEquals("001100", Code.comp("D"));
+        Assertions.assertEquals("0001100", Code.comp("D"));
         Assertions.assertEquals("0110000", Code.comp("A"));
         Assertions.assertEquals("0001101", Code.comp("!D"));
         Assertions.assertEquals("0110001", Code.comp("!A"));
