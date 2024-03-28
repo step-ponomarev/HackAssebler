@@ -20,31 +20,37 @@ public final class Hack {
         }
 
         try (final Parser parser = new Parser(asmFile)) {
-            final StringBuffer code = new StringBuffer();
+            final StringBuilder code = new StringBuilder();
             while (parser.hasMoreLines()) {
                 parser.advance();
-                InstructionType instructionType = parser.instructionType();
+
+                final InstructionType instructionType = parser.instructionType();
                 if (instructionType == InstructionType.A_INSTRUCTION) {
-                    
+                    code.append(0);
+                    code.append(parser.symbol());
+                } else {
+                    code.append(1111);
+
+                    code.append(
+                            Code.comp(
+                                    parser.comp()
+                            )
+                    );
+
+                    code.append(
+                            Code.dest(
+                                    parser.dest()
+                            )
+                    );
+
+                    code.append(
+                            Code.jump(
+                                    parser.jump()
+                            )
+                    );
                 }
-
-                code.append(
-                        Code.comp(
-                                parser.comp()
-                        )
-                );
-
-                code.append(
-                        Code.dest(
-                                parser.dest()
-                        )
-                );
-
-                code.append(
-                        Code.jump(
-                                parser.jump()
-                        )
-                );
+                
+                code.append("\n");
             }
 
             final Path outFile = Paths.get(args[1]);

@@ -8,12 +8,12 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public final class ParserTest {
-    final static Path RESOURCES_DIR = Paths.get("test", "resources");
+import edu.assembler.Resources;
 
+public final class ParserTest {
     @Test
     public void testEmptyFile() throws IOException {
-        final Path file = RESOURCES_DIR.resolve("empty.asm");
+        final Path file = Resources.RESOURCES_DIR.resolve("empty.asm");
         Files.createFile(file);
         try (Parser parser = new Parser((file))) {
             parser.advance();
@@ -42,7 +42,7 @@ public final class ParserTest {
                 // и еще один
                 """;
 
-        final Path file = RESOURCES_DIR.resolve("comments.asm");
+        final Path file = Resources.RESOURCES_DIR.resolve("comments.asm");
         Files.createFile(file);
         Files.writeString(file, comments);
         try (Parser parser = new Parser((file))) {
@@ -63,7 +63,7 @@ public final class ParserTest {
     public void testAInstruction() throws IOException {
         final String digit = "12345";
 
-        final Path file = RESOURCES_DIR.resolve("a_instruction.asm");
+        final Path file = Resources.RESOURCES_DIR.resolve("a_instruction.asm");
         Files.createFile(file);
         Files.writeString(file, "@" + digit);
 
@@ -93,7 +93,7 @@ public final class ParserTest {
             }
         }
 
-        final Path file = RESOURCES_DIR.resolve("jump_instruction.asm");
+        final Path file = Resources.RESOURCES_DIR.resolve("jump_instruction.asm");
         Files.createFile(file);
         Files.writeString(file, asmInstruction.toString());
 
@@ -132,7 +132,7 @@ public final class ParserTest {
             }
         }
 
-        final Path file = RESOURCES_DIR.resolve("assign_instruction.asm");
+        final Path file = Resources.RESOURCES_DIR.resolve("assign_instruction.asm");
         Files.createFile(file);
         Files.writeString(file, asmInstruction.toString());
 
@@ -163,7 +163,7 @@ public final class ParserTest {
     public void testSpaceRemoving() throws IOException {
         final String assignText = "A     = M +      D";
 
-        final Path file = RESOURCES_DIR.resolve("assign_instruction.asm");
+        final Path file = Resources.RESOURCES_DIR.resolve("assign_instruction.asm");
         Files.createFile(file);
         Files.writeString(file, assignText);
 
