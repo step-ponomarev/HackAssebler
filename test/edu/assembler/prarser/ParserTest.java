@@ -3,12 +3,13 @@ package edu.assembler.prarser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import edu.assembler.Constants;
 import edu.assembler.Resources;
+import edu.assembler.exceptions.NumberOutOfRangeException;
 
 public final class ParserTest {
     @Test
@@ -75,6 +76,33 @@ public final class ParserTest {
             Assertions.assertNull(parser.comp());
             Assertions.assertNull(parser.dest());
             Assertions.assertNull(parser.jump());
+            Assertions.assertFalse(parser.hasMoreLines());
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
+
+    @Test
+    public void testNumberOutOfRange() throws IOException {
+        final String codeTemplate = """
+                            @%d
+                            @%d
+                            """;
+
+        final Path file = Resources.RESOURCES_DIR.resolve("a_instruction.asm");
+        Files.createFile(file);
+        Files.writeString(file, String.format(codeTemplate, Constants.MAX_DECIMAL_VALUE, Constants.MAX_DECIMAL_VALUE + 1));
+
+        try (Parser parser = new Parser((file))) {
+            parser.advance();
+
+            Assertions.assertEquals(String.valueOf(Constants.MAX_DECIMAL_VALUE), parser.symbol());
+            Assertions.assertEquals(InstructionType.A_INSTRUCTION, parser.instructionType());
+            Assertions.assertNull(parser.comp());
+            Assertions.assertNull(parser.dest());
+            Assertions.assertNull(parser.jump());
+
+            Assertions.assertThrows(NumberOutOfRangeException.class, parser::advance);
             Assertions.assertFalse(parser.hasMoreLines());
         } finally {
             Files.deleteIfExists(file);

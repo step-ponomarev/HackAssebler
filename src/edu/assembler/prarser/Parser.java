@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import edu.assembler.Constants;
+import edu.assembler.exceptions.NumberOutOfRangeException;
+
 public final class Parser implements Closeable {
     private final BufferedReader reader;
 
@@ -88,11 +91,7 @@ public final class Parser implements Closeable {
         String currentLine;
         while ((currentLine = reader.readLine()) != null) {
             currentLine = currentLine.replaceAll("\s", "");
-            if (currentLine.isEmpty()) {
-                continue;
-            }
-
-            if (TokenPatterns.COMMENT.matcher(currentLine).matches()) {
+            if (currentLine.isEmpty() || TokenPatterns.COMMENT.matcher(currentLine).matches()) {
                 continue;
             }
 
@@ -127,7 +126,13 @@ public final class Parser implements Closeable {
     }
 
     private void handleAInstruction(String currentLine) {
-        symbol = currentLine.substring(1);
+        final String number = currentLine.substring(1);
+
+        if (Integer.parseInt(number) > Constants.MAX_DECIMAL_VALUE) {
+            throw new NumberOutOfRangeException("Number " + number + " is out of range [0, " + Constants.MAX_DECIMAL_VALUE + "]");
+        }
+
+        symbol = number;
     }
 
     public InstructionType instructionType() {
