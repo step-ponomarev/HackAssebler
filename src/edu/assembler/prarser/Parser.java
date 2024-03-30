@@ -65,6 +65,10 @@ public final class Parser implements Closeable {
             if (instruction == null && eof) {
                 return;
             }
+            
+            if (instruction == null) {
+                throw new IllegalStateException("Instruction cannot be null!");
+            }
 
             final InstructionType type = InstructionType.parse(instruction);
             if (type == null) {
@@ -80,6 +84,7 @@ public final class Parser implements Closeable {
             switch (type) {
                 case A_INSTRUCTION -> handleAInstruction(instruction);
                 case C_INSTRUCTION -> handleCInstruction(instruction);
+                case L_INSTRUCTION -> handleLInstruction(instruction);
                 default -> throw new UnsupportedOperationException("Unsupported instruction " + type);
             }
         } catch (IOException e) {
@@ -108,14 +113,12 @@ public final class Parser implements Closeable {
             handleJump(currentLine);
         } else if (TokenPatterns.ASSIGN_INSTRUCTION.matcher(currentLine).matches()) {
             handleAssign(currentLine);
-        } else if (TokenPatterns.LABEL_INSTRUCTION.matcher(currentLine).matches()) {
-            throw new UnsupportedOperationException("Unsupported instruction");
         }
     }
 
     private void handleJump(String currentLine) {
         final String[] split = currentLine.split(";");
-        dest = split[0];
+        comp = split[0];
         jump = split[1];
     }
 
@@ -125,14 +128,16 @@ public final class Parser implements Closeable {
         comp = split[1];
     }
 
+    private void handleLInstruction(String currentLine) {
+        symbol = currentLine.substring(1, currentLine.length() - 1);
+    }
+
     private void handleAInstruction(String currentLine) {
-        final String number = currentLine.substring(1);
-
-        if (Integer.parseInt(number) > Constants.MAX_DECIMAL_VALUE) {
-            throw new NumberOutOfRangeException("Number " + number + " is out of range [0, " + Constants.MAX_DECIMAL_VALUE + "]");
+        final String numberOrSymbol = currentLine.substring(1);
+        if (TokenPatterns.DECIMAL.matcher(numberOrSymbol).matches() && Integer.parseInt(numberOrSymbol) > Constants.MAX_DECIMAL_VALUE) {
+            throw new NumberOutOfRangeException("Number " + numberOrSymbol + " is out of range [0, " + Constants.MAX_DECIMAL_VALUE + "]");
         }
-
-        symbol = number;
+        symbol = numberOrSymbol;
     }
 
     public InstructionType instructionType() {
