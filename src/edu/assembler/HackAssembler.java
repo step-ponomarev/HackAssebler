@@ -100,7 +100,7 @@ public final class HackAssembler {
     }
 
     static String createCInstruction(Parser parser) {
-        final StringBuilder instruction = new StringBuilder("111");
+        final StringBuilder instruction = new StringBuilder(Constants.C_INSTRUCTION_START_CODE);
         instruction.append(
                 Code.comp(
                         parser.comp()

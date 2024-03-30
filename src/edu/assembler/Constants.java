@@ -9,6 +9,8 @@ public final class Constants {
     public static final int MAX_DECIMAL_VALUE = 0b111111111111111;
     public static final Map<String, Integer> DEFAULT_LABEL_TO_ADDRESS;
     public static final int VARIABLE_START_ADDRESS = 16;
+    
+    public static final String C_INSTRUCTION_START_CODE = "111";
 
     static {
         final Map<String, Integer> labels = new HashMap<>();
