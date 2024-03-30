@@ -11,7 +11,6 @@ import edu.assembler.prarser.InstructionType;
 import edu.assembler.prarser.Parser;
 
 public final class HackAssembler {
-
     public static void main(String[] args) {
         if (args.length != 2) {
             throw new IllegalArgumentException("Expected 2 arg, but got: " + args.length);
@@ -24,17 +23,18 @@ public final class HackAssembler {
 
         try (final Parser parser = new Parser(asmFile)) {
             final Map<String, Integer> labels = new HashMap<>(Constants.DEFAULT_LABEL_TO_ADDRESS);
-            for (int ip = 16; parser.hasMoreLines(); ip++) {
+            for (int ip = 0; parser.hasMoreLines(); ip++) {
                 parser.advance();
                 if (parser.instructionType() != InstructionType.L_INSTRUCTION) {
                     continue;
                 }
-
-                labels.put(parser.symbol(), ip + 1);
+                
+                labels.put(parser.symbol(), ip--);
             }
 
             parser.reset();
 
+            final int[] currVarAddress = { Constants.VARIABLE_START_ADDRESS };
             final StringBuilder code = new StringBuilder();
             while (parser.hasMoreLines()) {
                 parser.advance();
@@ -44,7 +44,7 @@ public final class HackAssembler {
                     continue;
                 }
 
-                code.append(instructionType == InstructionType.C_INSTRUCTION ? createCInstruction(parser) : createAInstruction(parser, labels));
+                code.append(instructionType == InstructionType.C_INSTRUCTION ? createCInstruction(parser) : createAInstruction(parser.symbol(), labels, currVarAddress));
                 code.append("\n");
             }
 
@@ -57,13 +57,19 @@ public final class HackAssembler {
         }
     }
 
-    private static String createAInstruction(Parser parser, Map<String, Integer> labelToAddress) {
-        final String symbol = parser.symbol();
-        final Integer address = labelToAddress.get(symbol);
+    private static String createAInstruction(String symbol, Map<String, Integer> labelToAddress, int[] currVarAddress) {
+        if (currVarAddress.length != 1) {
+            throw new IllegalStateException("Curr address invalid format");
+        }
 
-        final String binaryValue = Integer.toBinaryString(
-                address == null ? Integer.parseInt(parser.symbol()) : address
-        );
+        String binaryValue;
+        try {
+            binaryValue = Integer.toBinaryString(Integer.parseInt(symbol));
+        } catch (NumberFormatException e) {
+            final Integer address = labelToAddress.get(symbol);
+
+            binaryValue = Integer.toBinaryString(address == null ? currVarAddress[0]++ : address);
+        }
 
         return String.format("%0" + (Constants.INSTRUCTION_LENGTH - binaryValue.length()) + "d%s", 0, binaryValue);
     }

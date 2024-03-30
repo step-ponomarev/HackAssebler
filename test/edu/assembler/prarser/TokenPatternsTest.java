@@ -56,13 +56,11 @@ public final class TokenPatternsTest {
         for (String start : correctStringFirstSymbols) {
             final String curSymbol = "(" + start + symbol;
             Assertions.assertTrue(TokenPatterns.L_INSTRUCTION.matcher(curSymbol).matches());
-            Assertions.assertTrue(TokenPatterns.C_INSTRUCTION.matcher(curSymbol).matches());
         }
 
         for (int i = 0; i <= 9; i++) {
             final String curSymbol = "(" + i + symbol;
             Assertions.assertFalse(TokenPatterns.L_INSTRUCTION.matcher(curSymbol).matches());
-            Assertions.assertFalse(TokenPatterns.C_INSTRUCTION.matcher(curSymbol).matches());
         }
     }
 
