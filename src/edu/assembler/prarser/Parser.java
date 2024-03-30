@@ -115,7 +115,7 @@ public final class Parser implements Closeable {
 
     private void handleJump(String currentLine) {
         final String[] split = currentLine.split(";");
-        dest = split[0];
+        comp = split[0];
         jump = split[1];
     }
 
