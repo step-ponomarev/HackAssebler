@@ -38,6 +38,8 @@ public final class HackAssemblerTest {
             final Path compiledHackFile = Resources.RESOURCES_DIR.resolve(name + ".hack");
             Assertions.assertEquals(Files.size(compiledHackFile), Files.size(testHackFile));
             Assertions.assertEquals(Files.readString(compiledHackFile), Files.readString(testHackFile));
+        } catch (Error e) {
+            throw new RuntimeException("Parsing of file: " + sourceFile + " is failed", e);
         } finally {
             Files.deleteIfExists(testHackFile);
         }

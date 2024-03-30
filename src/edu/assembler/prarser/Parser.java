@@ -10,7 +10,9 @@ import edu.assembler.Constants;
 import edu.assembler.exceptions.NumberOutOfRangeException;
 
 public final class Parser implements Closeable {
-    private final BufferedReader reader;
+    private BufferedReader reader;
+
+    private final Path file;
 
     private boolean eof;
     private String currInstruction;
@@ -32,7 +34,13 @@ public final class Parser implements Closeable {
             throw new IllegalStateException("File does not exist: " + file);
         }
 
+        this.file = file;
         this.reader = Files.newBufferedReader(file);
+    }
+
+    public void reset() throws IOException {
+        reader = Files.newBufferedReader(file);
+        eof = false;
     }
 
     @Override
@@ -80,6 +88,7 @@ public final class Parser implements Closeable {
             switch (type) {
                 case A_INSTRUCTION -> handleAInstruction(instruction);
                 case C_INSTRUCTION -> handleCInstruction(instruction);
+                case L_INSTRUCTION -> handleLInstruction(instruction);
                 default -> throw new UnsupportedOperationException("Unsupported instruction " + type);
             }
         } catch (IOException e) {
@@ -108,8 +117,6 @@ public final class Parser implements Closeable {
             handleJump(currentLine);
         } else if (TokenPatterns.ASSIGN_INSTRUCTION.matcher(currentLine).matches()) {
             handleAssign(currentLine);
-        } else if (TokenPatterns.LABEL_INSTRUCTION.matcher(currentLine).matches()) {
-            throw new UnsupportedOperationException("Unsupported instruction");
         }
     }
 
@@ -124,15 +131,21 @@ public final class Parser implements Closeable {
         dest = split[0];
         comp = split[1];
     }
+    
+    private void handleLInstruction(String currentLine) {
+        symbol = currentLine.substring(1, currentLine.length() - 1);
+    }
 
     private void handleAInstruction(String currentLine) {
-        final String number = currentLine.substring(1);
+        final String numberOrSymbol = currentLine.substring(1);
 
-        if (Integer.parseInt(number) > Constants.MAX_DECIMAL_VALUE) {
-            throw new NumberOutOfRangeException("Number " + number + " is out of range [0, " + Constants.MAX_DECIMAL_VALUE + "]");
-        }
+        try {
+            if (Integer.parseInt(numberOrSymbol) > Constants.MAX_DECIMAL_VALUE) {
+                throw new NumberOutOfRangeException("Number " + numberOrSymbol + " is out of range [0, " + Constants.MAX_DECIMAL_VALUE + "]");
+            }
+        } catch (NumberFormatException ignore) {}
 
-        symbol = number;
+        symbol = numberOrSymbol;
     }
 
     public InstructionType instructionType() {

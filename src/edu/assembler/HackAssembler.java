@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.assembler.prarser.InstructionType;
 import edu.assembler.prarser.Parser;
 
 public final class HackAssembler {
+
     public static void main(String[] args) {
         if (args.length != 2) {
             throw new IllegalArgumentException("Expected 2 arg, but got: " + args.length);
@@ -20,12 +23,28 @@ public final class HackAssembler {
         }
 
         try (final Parser parser = new Parser(asmFile)) {
+            final Map<String, Integer> labels = new HashMap<>(Constants.DEFAULT_LABEL_TO_ADDRESS);
+            for (int ip = 16; parser.hasMoreLines(); ip++) {
+                parser.advance();
+                if (parser.instructionType() != InstructionType.L_INSTRUCTION) {
+                    continue;
+                }
+
+                labels.put(parser.symbol(), ip + 1);
+            }
+
+            parser.reset();
+
             final StringBuilder code = new StringBuilder();
             while (parser.hasMoreLines()) {
                 parser.advance();
 
                 final InstructionType instructionType = parser.instructionType();
-                code.append(instructionType == InstructionType.C_INSTRUCTION ? createCInstruction(parser) : createAInstruction(parser));
+                if (instructionType == InstructionType.L_INSTRUCTION) {
+                    continue;
+                }
+
+                code.append(instructionType == InstructionType.C_INSTRUCTION ? createCInstruction(parser) : createAInstruction(parser, labels));
                 code.append("\n");
             }
 
@@ -38,9 +57,12 @@ public final class HackAssembler {
         }
     }
 
-    private static String createAInstruction(Parser parser) {
+    private static String createAInstruction(Parser parser, Map<String, Integer> labelToAddress) {
+        final String symbol = parser.symbol();
+        final Integer address = labelToAddress.get(symbol);
+
         final String binaryValue = Integer.toBinaryString(
-                Integer.parseInt(parser.symbol())
+                address == null ? Integer.parseInt(parser.symbol()) : address
         );
 
         return String.format("%0" + (Constants.INSTRUCTION_LENGTH - binaryValue.length()) + "d%s", 0, binaryValue);

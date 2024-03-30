@@ -3,6 +3,8 @@ package edu.assembler.prarser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import edu.assembler.Constants;
+
 public final class TokenPatternsTest {
     @Test
     public void matchCommentLine() {
@@ -17,6 +19,9 @@ public final class TokenPatternsTest {
     @Test
     public void matchAInstruction() {
         Assertions.assertTrue(TokenPatterns.A_INSTRUCTION.matcher("@128").matches());
+
+        final boolean matches = Constants.DEFAULT_LABEL_TO_ADDRESS.keySet().stream().allMatch(s -> TokenPatterns.A_INSTRUCTION.matcher("@" + s).matches());
+        Assertions.assertTrue(matches);
     }
 
     @Test
@@ -37,23 +42,26 @@ public final class TokenPatternsTest {
         for (int i = 0; i <= 9; i++) {
             Assertions.assertFalse(TokenPatterns.SYMBOL.matcher(i + symbol).matches());
         }
+
+        final boolean matches = Constants.DEFAULT_LABEL_TO_ADDRESS.keySet().stream().allMatch(s -> TokenPatterns.SYMBOL.matcher(s).matches());
+        Assertions.assertTrue(matches);
     }
 
     @Test
     public void matchLabel() {
         final String symbol = "testSymbol)";
-        Assertions.assertTrue(TokenPatterns.LABEL_INSTRUCTION.matcher("(" + symbol).matches());
+        Assertions.assertTrue(TokenPatterns.L_INSTRUCTION.matcher("(" + symbol).matches());
 
         final String[] correctStringFirstSymbols = {":", "$", "_", "."};
         for (String start : correctStringFirstSymbols) {
             final String curSymbol = "(" + start + symbol;
-            Assertions.assertTrue(TokenPatterns.LABEL_INSTRUCTION.matcher(curSymbol).matches());
+            Assertions.assertTrue(TokenPatterns.L_INSTRUCTION.matcher(curSymbol).matches());
             Assertions.assertTrue(TokenPatterns.C_INSTRUCTION.matcher(curSymbol).matches());
         }
 
         for (int i = 0; i <= 9; i++) {
             final String curSymbol = "(" + i + symbol;
-            Assertions.assertFalse(TokenPatterns.LABEL_INSTRUCTION.matcher(curSymbol).matches());
+            Assertions.assertFalse(TokenPatterns.L_INSTRUCTION.matcher(curSymbol).matches());
             Assertions.assertFalse(TokenPatterns.C_INSTRUCTION.matcher(curSymbol).matches());
         }
     }
