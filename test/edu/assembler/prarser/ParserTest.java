@@ -131,10 +131,10 @@ public final class ParserTest {
                     parser.advance();
 
                     Assertions.assertEquals(InstructionType.C_INSTRUCTION, parser.instructionType());
-                    Assertions.assertEquals(register, parser.dest());
+                    Assertions.assertEquals(register, parser.comp());
                     Assertions.assertEquals(jump, parser.jump());
                     Assertions.assertNull(parser.symbol());
-                    Assertions.assertNull(parser.comp());
+                    Assertions.assertNull(parser.dest());
                 }
             }
 

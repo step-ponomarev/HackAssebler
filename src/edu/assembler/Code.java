@@ -13,9 +13,12 @@ public final class Code {
             case "M" -> "001";
             case "D" -> "010";
             case "DM" -> "011";
+            case "MD" -> "011";
             case "A" -> "100";
             case "AM" -> "101";
+            case "MA" -> "101";
             case "AD" -> "110";
+            case "DA" -> "110";
             case "ADM" -> "111";
 
             default -> throw new IllegalStateException("Unsupported dest: " + dest);
@@ -34,6 +37,7 @@ public final class Code {
             case "-D" -> "0001111";
             case "-A" -> "0110011";
             case "D+1" -> "0011111";
+            case "A+1" -> "0110111";
             case "D-1" -> "0001110";
             case "A-1" -> "0110010";
             case "D+A" -> "0000010";
@@ -49,6 +53,7 @@ public final class Code {
             case "M-1" -> "1110010";
             case "D+M" -> "1000010";
             case "D-M" -> "1010011";
+            case "M-D" -> "1000111";
             case "D&M" -> "1000000";
             case "D|M" -> "1010101";
 

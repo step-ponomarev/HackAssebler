@@ -56,6 +56,7 @@ public final class CodeTest {
         Assertions.assertEquals("1110010", Code.comp("M-1"));
         Assertions.assertEquals("1000010", Code.comp("D+M"));
         Assertions.assertEquals("1010011", Code.comp("D-M"));
+        Assertions.assertEquals("1000111", Code.comp("M-D"));
         Assertions.assertEquals("1000000", Code.comp("D&M"));
         Assertions.assertEquals("1010101", Code.comp("D|M"));
     }
