@@ -28,13 +28,13 @@ public final class HackAssembler {
                 if (parser.instructionType() != InstructionType.L_INSTRUCTION) {
                     continue;
                 }
-                
+
                 labels.put(parser.symbol(), ip--);
             }
 
             parser.reset();
 
-            final int[] currVarAddress = { Constants.VARIABLE_START_ADDRESS };
+            final int[] currVarAddress = {Constants.VARIABLE_START_ADDRESS};
             final StringBuilder code = new StringBuilder();
             while (parser.hasMoreLines()) {
                 parser.advance();
@@ -46,6 +46,7 @@ public final class HackAssembler {
 
                 code.append(instructionType == InstructionType.C_INSTRUCTION ? createCInstruction(parser) : createAInstruction(parser.symbol(), labels, currVarAddress));
                 code.append("\n");
+
             }
 
             final Path outFile = Paths.get(args[1]);
@@ -66,9 +67,15 @@ public final class HackAssembler {
         try {
             binaryValue = Integer.toBinaryString(Integer.parseInt(symbol));
         } catch (NumberFormatException e) {
-            final Integer address = labelToAddress.get(symbol);
+            Integer address = labelToAddress.get(symbol);
+            if (address == null) {
+                final int varAddress = currVarAddress[0]++;
 
-            binaryValue = Integer.toBinaryString(address == null ? currVarAddress[0]++ : address);
+                address = varAddress;
+                labelToAddress.put(symbol, address);
+            }
+
+            binaryValue = Integer.toBinaryString(address);
         }
 
         return String.format("%0" + (Constants.INSTRUCTION_LENGTH - binaryValue.length()) + "d%s", 0, binaryValue);

@@ -1,5 +1,6 @@
 package edu.assembler;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,9 +15,7 @@ public final class HackAssemblerTest {
 
     @Test
     public void testCompilation() throws IOException {
-        final Iterator<Path> iterator = Files.newDirectoryStream(Resources.RESOURCES_DIR).iterator();
-        while (iterator.hasNext()) {
-            final Path next = iterator.next();
+        for (Path next : Files.newDirectoryStream(Resources.RESOURCES_DIR)) {
             if (!SOURSE_FILE_PATTERN.matcher(next.getFileName().toString()).matches()) {
                 continue;
             }
@@ -33,13 +32,23 @@ public final class HackAssemblerTest {
         HackAssembler.main(new String[]{sourceFile.toString(), testHackFile.toString()});
         Assertions.assertTrue(Files.exists(testHackFile));
 
-        try {
-            //reference binary code
-            final Path compiledHackFile = Resources.RESOURCES_DIR.resolve(name + ".hack");
-            Assertions.assertEquals(Files.size(compiledHackFile), Files.size(testHackFile));
-            Assertions.assertEquals(Files.readString(compiledHackFile), Files.readString(testHackFile));
+        //reference binary code
+        final Path reference = Resources.RESOURCES_DIR.resolve(name + ".hack");
+        Assertions.assertEquals(Files.size(reference), Files.size(testHackFile));
+
+        int currLine = 1;
+        try (BufferedReader referenceFileReader = Files.newBufferedReader(reference);
+             BufferedReader testFileReader = Files.newBufferedReader(testHackFile)
+        ) {
+            String referenceLine;
+            String testLine;
+            while (((referenceLine = referenceFileReader.readLine()) != null)
+                    && ((testLine = testFileReader.readLine()) != null)) {
+                Assertions.assertEquals(referenceLine, testLine);
+                currLine++;
+            }
         } catch (Error e) {
-            throw new RuntimeException("Parsing of file: " + sourceFile + " is failed", e);
+            throw new RuntimeException("Failed compilation of " + sourceFile.getFileName().toString() + " lines are not equals, line: " + currLine, e);
         } finally {
             Files.deleteIfExists(testHackFile);
         }
