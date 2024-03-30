@@ -65,6 +65,10 @@ public final class Parser implements Closeable {
             if (instruction == null && eof) {
                 return;
             }
+            
+            if (instruction == null) {
+                throw new IllegalStateException("Instruction cannot be null!");
+            }
 
             final InstructionType type = InstructionType.parse(instruction);
             if (type == null) {
