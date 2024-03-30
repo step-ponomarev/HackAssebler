@@ -10,9 +10,7 @@ import edu.assembler.Constants;
 import edu.assembler.exceptions.NumberOutOfRangeException;
 
 public final class Parser implements Closeable {
-    private BufferedReader reader;
-
-    private final Path file;
+    private final BufferedReader reader;
 
     private boolean eof;
     private String currInstruction;
@@ -34,13 +32,7 @@ public final class Parser implements Closeable {
             throw new IllegalStateException("File does not exist: " + file);
         }
 
-        this.file = file;
         this.reader = Files.newBufferedReader(file);
-    }
-
-    public void reset() throws IOException {
-        reader = Files.newBufferedReader(file);
-        eof = false;
     }
 
     @Override
@@ -131,20 +123,16 @@ public final class Parser implements Closeable {
         dest = split[0];
         comp = split[1];
     }
-    
+
     private void handleLInstruction(String currentLine) {
         symbol = currentLine.substring(1, currentLine.length() - 1);
     }
 
     private void handleAInstruction(String currentLine) {
         final String numberOrSymbol = currentLine.substring(1);
-
-        try {
-            if (Integer.parseInt(numberOrSymbol) > Constants.MAX_DECIMAL_VALUE) {
-                throw new NumberOutOfRangeException("Number " + numberOrSymbol + " is out of range [0, " + Constants.MAX_DECIMAL_VALUE + "]");
-            }
-        } catch (NumberFormatException ignore) {}
-
+        if (TokenPatterns.DECIMAL.matcher(numberOrSymbol).matches() && Integer.parseInt(numberOrSymbol) > Constants.MAX_DECIMAL_VALUE) {
+            throw new NumberOutOfRangeException("Number " + numberOrSymbol + " is out of range [0, " + Constants.MAX_DECIMAL_VALUE + "]");
+        }
         symbol = numberOrSymbol;
     }
 
