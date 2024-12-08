@@ -102,6 +102,11 @@ public final class TokenPatternsTest {
     }
 
     @Test
+    public void matchNotAssignInstruction() {
+        Assertions.assertTrue(TokenPatterns.ASSIGN_INSTRUCTION.matcher("D=-D").matches());
+    }
+
+    @Test
     public void matchLabelJmpInstruction() {
         final String[] jmpCommands = {"JGT", "JEQ", "JGE", "JLT", "JNE", "JLE", "JMP"};
 
